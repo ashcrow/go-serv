@@ -1,7 +1,7 @@
 # go-serv
 go-serv attempts to take care of common requirements for web applications while not dictating any specific Go web framework. 
 
-*Warning*: Currently in development with no official release yet.
+**Warning**: Currently in development with no official release yet.
 
 ## Features
 
@@ -14,7 +14,7 @@ go-serv attempts to take care of common requirements for web applications while 
 * (Comming soon) Run HTTP and HTTPS servers with the same binary.
 
 ### Configuration File Example
-```toml
+```plain
 ; Note that the names are the same across the BaseConfiguration
 ; struct, this config file, and command line flags.
 BindAddress"127.0.0.1"
