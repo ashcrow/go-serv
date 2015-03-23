@@ -1,0 +1,6 @@
+; Example
+BindAddress"127.0.0.1"
+BindPort=8000
+LogLevel="info"
+LogFile="/tmp/out.log"
+Test=true
