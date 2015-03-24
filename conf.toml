@@ -1,6 +1,9 @@
-; Example
-BindAddress"127.0.0.1"
-BindPort=8000
-LogLevel="info"
-LogFile="/tmp/out.log"
-Test=true
+# Example
+BindAddress   = "127.0.0.1"
+BindPort      = 8000
+LogLevel      = "info"
+LogFile       = "/tmp/out.log"
+CertFile      = "./cert.pem"
+KeyFile       = "./key.pem"
+BindHttpsPort = 8181
+Test          = true

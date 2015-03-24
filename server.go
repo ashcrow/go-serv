@@ -35,6 +35,9 @@ type BaseConfiguration struct {
 	MaxHeaderBytes int
 	LogLevel       string
 	LogFile        string
+	BindHttpsPort  int
+	CertFile       string
+	KeyFile        string
 }
 
 // Configures the package level Logger instance
@@ -62,6 +65,49 @@ func makeLogger(conf *BaseConfiguration) {
 	Logger.Infof("Initialized at level %s", Logger.Level)
 }
 
+// Runs an http server in a goroutine.
+func BackgroundRunHttp(server *http.Server, conf *BaseConfiguration) (chan error) {
+	http := make(chan error)
+	go func() {
+		http <- server.ListenAndServe()
+	}()
+	return http
+}
+
+// Runs an https server in a goroutine.
+func BackgroundRunHttps(server *http.Server, conf *BaseConfiguration) (chan error) {
+	https := make(chan error)
+	go func() {
+		server.Addr = conf.BindAddress + ":" + strconv.FormatInt(int64(conf.BindHttpsPort), 10)
+		https <- server.ListenAndServeTLS(conf.CertFile, conf.KeyFile)
+	}()
+	return https
+}
+
+
+// Runs both Http and Https servers in their own goroutines. If one server
+// exists the channels are closed and execution returns to the main goroutine.
+func RunHttpAndHttps(server *http.Server, conf *BaseConfiguration) error {
+	http := BackgroundRunHttp(server, conf)
+	https := BackgroundRunHttps(server, conf)
+	var err error
+	LOOP:
+	for {
+		select {
+		case err = <- http:
+			Logger.Fatalf("HTTP server error: %s", err)
+			break LOOP
+		case err = <- https:
+			Logger.Fatalf("HTTPS server error: %s", err)
+			break LOOP
+		}
+	}
+	close(http)
+	close(https)
+	return err
+}
+
+
 // Creates a new http.Server instance based off the BaseConfiguration.
 // NewServer also handles reading the TOML configuration file and
 // providing/reading the command line flags. Because of this
@@ -73,7 +119,7 @@ func NewServer(conf *BaseConfiguration) http.Server {
 		defer Logger.Info("No conf. Skipping.")
 	} else {
 		if _, err := toml.Decode(string(tomlData), &conf); err != nil {
-			defer Logger.Error("Configuration file could not be decoded.")
+			defer Logger.Error("Configuration file could not be decoded. %s", err)
 		}
 	}
 	// Flags can override config items
@@ -87,6 +133,11 @@ func NewServer(conf *BaseConfiguration) http.Server {
 	// Server Logger flags
 	flag.StringVar(&conf.LogLevel, "LogLevel", conf.LogLevel, "Log level.")
 	flag.StringVar(&conf.LogFile, "LogFile", conf.LogFile, "Log file.")
+
+	// TLS related flags
+	flag.IntVar(&conf.BindHttpsPort, "BindHttpsPort", conf.BindHttpsPort, "HTTPS bind port.")
+	flag.StringVar(&conf.CertFile, "CertFile", conf.CertFile, "Cert file.")
+	flag.StringVar(&conf.KeyFile, "KeyFile", conf.KeyFile, "Key file.")
 	flag.Parse()
 
 	// Logging specific work also injecting the logrus log into the Servers errorlog

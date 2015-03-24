@@ -26,6 +26,7 @@ build-examples-all:
 	go build -o bin/status-example examples/status.go
 	go build -o bin/gorilla-example examples/gorilla.go
 	go build -o bin/flag-example examples/flag.go
+	go build -o bin/httpandhttps-example examples/httpandhttps.go
 	@echo "See bin/ for examples."
 
 build-examples-fast: build-fast build-examples-all
