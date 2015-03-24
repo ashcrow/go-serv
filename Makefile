@@ -11,7 +11,7 @@ help:
 build: clean
 	go build -race -x -a .
 
-build-fast:
+build-fast: clean
 	go build .
 
 install:
