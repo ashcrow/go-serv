@@ -1,4 +1,4 @@
-// go-serv is a simple web application server bootstrap. It provides a common base
+// Package goserv is a simple web application server bootstrap. It provides a common base
 // for those wishing to focus on their application rather than on setting up
 // flags, configuration files or logging. go-serv also comes with a simple
 // status system for those who wish to expose structures via HTTP(s) for
@@ -7,15 +7,19 @@ package goserv
 
 import (
 	"flag"
-	"github.com/BurntSushi/toml"
-	"github.com/Sirupsen/logrus"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/BurntSushi/toml"
+	"github.com/Sirupsen/logrus"
 )
+
+//
+const VERSION = "0.0.0"
 
 // Package level logger
 var Logger logrus.Logger
@@ -23,7 +27,7 @@ var Logger logrus.Logger
 // Logger used with http.Server. This is an instance of Logger.Writer()
 var ServerErrorLogger log.Logger
 
-// Configuration structure which can be filled out via
+// BaseConfiguration structure which can be filled out via
 // defaults passed via flags, a configuration file or via
 // the defaults set by the programmer (in that order of
 // precedence)
@@ -66,7 +70,7 @@ func makeLogger(conf *BaseConfiguration) {
 }
 
 // Runs an http server in a goroutine.
-func BackgroundRunHttp(server *http.Server, conf *BaseConfiguration) (chan error) {
+func BackgroundRunHttp(server *http.Server, conf *BaseConfiguration) chan error {
 	http := make(chan error)
 	go func() {
 		http <- server.ListenAndServe()
@@ -75,7 +79,7 @@ func BackgroundRunHttp(server *http.Server, conf *BaseConfiguration) (chan error
 }
 
 // Runs an https server in a goroutine.
-func BackgroundRunHttps(server *http.Server, conf *BaseConfiguration) (chan error) {
+func BackgroundRunHttps(server *http.Server, conf *BaseConfiguration) chan error {
 	https := make(chan error)
 	go func() {
 		server.Addr = conf.BindAddress + ":" + strconv.FormatInt(int64(conf.BindHttpsPort), 10)
@@ -84,20 +88,19 @@ func BackgroundRunHttps(server *http.Server, conf *BaseConfiguration) (chan erro
 	return https
 }
 
-
 // Runs both Http and Https servers in their own goroutines. If one server
 // exists the channels are closed and execution returns to the main goroutine.
 func RunHttpAndHttps(server *http.Server, conf *BaseConfiguration) error {
 	http := BackgroundRunHttp(server, conf)
 	https := BackgroundRunHttps(server, conf)
 	var err error
-	LOOP:
+LOOP:
 	for {
 		select {
-		case err = <- http:
+		case err = <-http:
 			Logger.Fatalf("HTTP server error: %s", err)
 			break LOOP
-		case err = <- https:
+		case err = <-https:
 			Logger.Fatalf("HTTPS server error: %s", err)
 			break LOOP
 		}
@@ -107,8 +110,7 @@ func RunHttpAndHttps(server *http.Server, conf *BaseConfiguration) error {
 	return err
 }
 
-
-// Creates a new http.Server instance based off the BaseConfiguration.
+// NewServer creates a new http.Server instance based off the BaseConfiguration.
 // NewServer also handles reading the TOML configuration file and
 // providing/reading the command line flags. Because of this
 // NewServer should always be called after all flags have been defined.
@@ -119,7 +121,7 @@ func NewServer(conf *BaseConfiguration) http.Server {
 		defer Logger.Info("No conf. Skipping.")
 	} else {
 		if _, err := toml.Decode(string(tomlData), &conf); err != nil {
-			defer Logger.Error("Configuration file could not be decoded. %s", err)
+			defer Logger.Errorf("Configuration file could not be decoded. %s", err)
 		}
 	}
 	// Flags can override config items

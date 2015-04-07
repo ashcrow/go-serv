@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/ashcrow/go-serv"
 	"net/http"
 	"runtime"
 	"time"
+
+	"github.com/ashcrow/go-serv"
 )
 
-// Our configuration
+// Conf is our configuration
 var Conf *goserv.BaseConfiguration
 
 // Main entry point

@@ -2,13 +2,14 @@
 package main
 
 import (
-	"github.com/ashcrow/go-serv"
-	"github.com/gorilla/mux"
 	"net/http"
 	"time"
+
+	"github.com/ashcrow/go-serv"
+	"github.com/gorilla/mux"
 )
 
-// Our configuration
+// Conf is our configuration
 var Conf goserv.BaseConfiguration
 
 // Main entry point

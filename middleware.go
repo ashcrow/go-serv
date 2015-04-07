@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-// Restricts access to a handler by IP
+// RestrictByIP restricts access to a handler by IP
 func RestrictByIP(handler http.HandlerFunc, allowedIps []string) http.HandlerFunc {
 	sort.Strings(allowedIps)
 

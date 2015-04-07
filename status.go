@@ -7,17 +7,17 @@ import (
 	"time"
 )
 
-// This struct is used for the output of all status items
+// Status is used for the output of all status items
 type Status struct {
 	Time time.Time
 	Data interface{}
 }
 
-// A function that takes no input and returns on item
+// Callable is a function that takes no input and returns on item
 type Callable func() interface{}
 
-// Takes an interface and bool to note if the results should be pretty
-// and turns it into Status output in JSON
+// StructHandler takes an interface and bool to note if the results
+// should be pretty and turns it into Status output in JSON
 func StructHandler(item interface{}, pretty bool) http.HandlerFunc {
 	status := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
@@ -37,7 +37,7 @@ func StructHandler(item interface{}, pretty bool) http.HandlerFunc {
 	return status
 }
 
-// Takes a Callable and bool to note if the results should be pretty
+// FuncHandler takes a Callable and bool to note if the results should be pretty
 // and passes the resulting interface go StatusHandler.StructHandler
 func FuncHandler(callable Callable, pretty bool) http.HandlerFunc {
 	return StructHandler(callable(), pretty)

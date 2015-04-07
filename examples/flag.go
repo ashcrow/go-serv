@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
-	"github.com/ashcrow/go-serv"
 	"net/http"
 	"time"
+
+	"github.com/ashcrow/go-serv"
 )
 
-// Type to hold configuration. We embed BaseConfiguration
+// MyConfiguration holds configuration. We embed BaseConfiguration
 // to take advantage of the HTTP related flags. We can
 // also extend it by adding other fields (like Test)
 type MyConfiguration struct {
@@ -15,7 +16,7 @@ type MyConfiguration struct {
 	Test bool
 }
 
-// Our configuration
+// Conf is our configuration
 var Conf *MyConfiguration
 
 // Main entry point
