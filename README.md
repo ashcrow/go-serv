@@ -1,6 +1,8 @@
 # go-serv
 go-serv attempts to take care of common requirements for web applications while not dictating any specific Go web framework. 
 
+Repo: https://github.com/ashcrow/go-serv/
+
 **Warning**: Currently in development with no official release yet.
 
 ## Features
@@ -12,6 +14,11 @@ go-serv attempts to take care of common requirements for web applications while 
 * Command line flags which can overrule configuration file
 * Simple status/health system for exposing structs
 * Run HTTP and HTTPS servers with the same binary.
+
+### Installation
+```bash
+go get gopkg.in/ashcrow/go-serv.v0
+```
 
 ### Configuration File Example
 ```plain
@@ -57,7 +64,11 @@ Usage of ./status-example:
   -WriteTimeout=10s: Write timeout.
 ```
 
-## Building Examples
+## Examples
+Examples can be found in the [examples folder](https://github.com/ashcrow/go-serv/tree/master/examples)
+
+### Building Examples
+
 There is a Makefile provided to build the code in the examples folder.
 
 ```bash

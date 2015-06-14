@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ashcrow/go-serv"
+	"gopkg.in/ashcrow/go-serv.v0"
 )
 
 // MyConfiguration holds configuration. We embed BaseConfiguration

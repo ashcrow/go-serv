@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/ashcrow/go-serv"
+	"gopkg.in/ashcrow/go-serv.v0"
 )
 
 // Conf is our configuration

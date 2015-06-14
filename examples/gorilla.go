@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ashcrow/go-serv"
 	"github.com/gorilla/mux"
+	"gopkg.in/ashcrow/go-serv.v0"
 )
 
 // Conf is our configuration
