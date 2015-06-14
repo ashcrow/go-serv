@@ -7,25 +7,27 @@ package goserv
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/Sirupsen/logrus"
 )
 
-//
+// Version of the library
 const VERSION = "0.0.0"
 
-// Package level logger
-var Logger logrus.Logger
+var (
+	// Package level logger
+	Logger logrus.Logger
 
-// Logger used with http.Server. This is an instance of Logger.Writer()
-var ServerErrorLogger log.Logger
+	// Logger used with http.Server. This is an instance of Logger.Writer()
+	ServerErrorLogger log.Logger
+)
 
 // BaseConfiguration structure which can be filled out via
 // defaults passed via flags, a configuration file or via
@@ -44,7 +46,7 @@ type BaseConfiguration struct {
 	KeyFile        string
 }
 
-// Configures the package level Logger instance
+// makeLogger configures the package level Logger instance
 func makeLogger(conf *BaseConfiguration) {
 	levelName, err := logrus.ParseLevel(conf.LogLevel)
 	if err != nil {
@@ -69,7 +71,8 @@ func makeLogger(conf *BaseConfiguration) {
 	Logger.Infof("Initialized at level %s", Logger.Level)
 }
 
-// Runs an http server in a goroutine.
+// BackgroundRunHttp runs an http server in a goroutine.
+// Returns a send-only channel to watch for errors.
 func BackgroundRunHttp(server *http.Server, conf *BaseConfiguration) chan error {
 	http := make(chan error)
 	go func() {
@@ -78,11 +81,12 @@ func BackgroundRunHttp(server *http.Server, conf *BaseConfiguration) chan error 
 	return http
 }
 
-// Runs an https server in a goroutine.
+// BackgroundRunHttps runs an https server in a goroutine.
+// Returns a send-only channel to watch for errors.
 func BackgroundRunHttps(server *http.Server, conf *BaseConfiguration) chan error {
 	https := make(chan error)
 	go func() {
-		server.Addr = conf.BindAddress + ":" + strconv.FormatInt(int64(conf.BindHttpsPort), 10)
+		server.Addr = fmt.Sprintf("%s:%d", conf.BindAddress, int(conf.BindHttpsPort))
 		https <- server.ListenAndServeTLS(conf.CertFile, conf.KeyFile)
 	}()
 	return https
@@ -98,10 +102,10 @@ LOOP:
 	for {
 		select {
 		case err = <-http:
-			Logger.Fatalf("HTTP server error: %s", err)
+			Logger.Fatalf("HTTP server error: %s. Exiting ...", err)
 			break LOOP
 		case err = <-https:
-			Logger.Fatalf("HTTPS server error: %s", err)
+			Logger.Fatalf("HTTPS server error: %s. Exiting ...", err)
 			break LOOP
 		}
 	}
@@ -121,7 +125,7 @@ func NewServer(conf *BaseConfiguration) http.Server {
 		defer Logger.Info("No conf. Skipping.")
 	} else {
 		if _, err := toml.Decode(string(tomlData), &conf); err != nil {
-			defer Logger.Errorf("Configuration file could not be decoded. %s", err)
+			defer Logger.Errorf("Configuration file could not be decoded. %s. Exiting...", err)
 		}
 	}
 	// Flags can override config items
@@ -153,7 +157,7 @@ func NewServer(conf *BaseConfiguration) http.Server {
 
 	// Return the configured http.Server
 	return http.Server{
-		Addr:           conf.BindAddress + ":" + strconv.FormatInt(int64(conf.BindPort), 10),
+		Addr:           fmt.Sprintf("%s:%d", conf.BindAddress, conf.BindPort),
 		ReadTimeout:    conf.ReadTimeout,
 		WriteTimeout:   conf.WriteTimeout,
 		MaxHeaderBytes: conf.MaxHeaderBytes,
