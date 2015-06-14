@@ -7,28 +7,35 @@ import (
 	"testing"
 )
 
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "OK")
+}
+
 // setUp does some setting up for the middleware tests.
-func setUp() (*httptest.ResponseRecorder, *http.Request, http.HandlerFunc) {
+func setUp() (*httptest.ResponseRecorder, *http.Request) {
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "http://127.0.0.1/", nil)
-	handler := func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "OK!") }
-	return recorder, request, handler
+	return recorder, request
+}
+
+// restrictedExpectation is reusable code for TestRestrictByIP
+func restrictedExpectation(t *testing.T, expectedCode int, allowedIps []string) {
+	w, request := setUp()
+	wrapped := RestrictByIP(handler, allowedIps)
+	request.RemoteAddr = "127.0.0.1"
+	wrapped(w, request)
+	if w.Code != expectedCode {
+		t.Fatalf("RestrictByIP did not return a %d: %d, %s", expectedCode, w.Code, w.Body)
+	}
 }
 
 func TestRestrictByIP(t *testing.T) {
-	// Case 1. Should be blocked
-	w, request, handler := setUp()
-	wrapped := RestrictByIP(handler, []string{"127.0.0.1"})
-	wrapped(w, request)
-	if w.Code != 404 {
-		t.Fatalf("RestrictByIP did not return a 404: %d, %s", w.Code, w.Body)
-	}
+	// Case 1. Should be blocked due to no IP's in the list
+	restrictedExpectation(t, 404, []string{})
 
-	// Case 2: Should be allowed
-	w, request, handler = setUp()
-	request.RemoteAddr = "127.0.0.1"
-	wrapped(w, request)
-	if w.Code != 200 {
-		t.Fatalf("RestrictByIP did not return a 200: %d, %s", w.Code, w.Body)
-	}
+	// Case 2: Should be blocked due to ip not in list
+	restrictedExpectation(t, 404, []string{"127.0.0.2"})
+
+	// Case 3: Should be allowed
+	restrictedExpectation(t, 200, []string{"127.0.0.1"})
 }
