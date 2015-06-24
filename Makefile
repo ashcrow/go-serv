@@ -1,12 +1,16 @@
 help:
 	@echo "Target			Description"
 	@echo "=====			==========="
+	@echo "test			Run unittests."
 	@echo "clean			Clean up."
 	@echo "build			Fully builds the source and dependencies."
 	@echo "build-fast		Builds just this packages code."
 	@echo "install			Installs the library."
 	@echo "build-examples		Fully builds the source and produces the examples in this package."
 	@echo "build-examples-fast	Builds and produces the examples in this package."
+
+test:
+	go test -v -cover
 
 build: clean
 	go build -race -x -a .

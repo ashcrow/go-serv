@@ -29,6 +29,7 @@ func restrictedExpectation(t *testing.T, expectedCode int, allowedIps []string) 
 	}
 }
 
+// TestRestrictByIP tests the RestrictByIP middleware
 func TestRestrictByIP(t *testing.T) {
 	// Case 1. Should be blocked due to no IP's in the list
 	restrictedExpectation(t, 404, []string{})

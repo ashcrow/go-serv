@@ -17,7 +17,18 @@ Repo: https://github.com/ashcrow/go-serv/
 
 ### Installation
 ```bash
-go get gopkg.in/ashcrow/go-serv.v0
+$ go get gopkg.in/ashcrow/go-serv.v0
+```
+
+### Unittesting
+```bash
+$ go test -v -cover
+```
+
+or
+
+```bash
+$ make test
 ```
 
 ### Configuration File Example
