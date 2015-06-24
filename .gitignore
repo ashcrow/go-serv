@@ -3,6 +3,10 @@
 *.a
 *.so
 
+# Test Files
+cert.pem
+key.pem
+
 # Folders
 _obj
 _test
