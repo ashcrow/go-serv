@@ -1,4 +1,7 @@
 # go-serv
+[![GoDoc](https://godoc.org/github.com/ashcrow/go-serv?status.png)](https://godoc.org/github.com/ashcrow/go-serv)
+[![Travis](https://travis-ci.org/ashcrow/go-serv.svg?branch=master)](https://travis-ci.org/ashcrow/go-serv)
+
 go-serv attempts to take care of common requirements for web applications while not dictating any specific Go web framework. 
 
 Repo: https://github.com/ashcrow/go-serv/
