@@ -1,6 +1,7 @@
 help:
 	@echo "Target			Description"
 	@echo "=====			==========="
+	@echo "get-deps		Downloads and installs dependencies"
 	@echo "test			Run unittests."
 	@echo "clean			Clean up."
 	@echo "build			Fully builds the source and dependencies."
@@ -9,8 +10,11 @@ help:
 	@echo "build-examples		Fully builds the source and produces the examples in this package."
 	@echo "build-examples-fast	Builds and produces the examples in this package."
 
+get-deps:
+	godep restore
+
 test:
-	go test -v -cover
+	godep go test -v -cover
 
 build: clean
 	go build -race -x -a .
