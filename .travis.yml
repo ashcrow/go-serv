@@ -4,7 +4,10 @@ go:
   - 1.4
 
 install:
-  - make get-deps
+  - go get github.com/tools/godep
 
 script:
   - make test
+
+notifications:
+  email: false
