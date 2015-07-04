@@ -6,8 +6,9 @@
 package goserv
 
 import (
-	"flag"
+	//"flag"
 	"fmt"
+	flag "github.com/ogier/pflag"
 	"io/ioutil"
 	"log"
 	"net/http"

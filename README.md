@@ -14,6 +14,7 @@ Repo: https://github.com/ashcrow/go-serv/
 * Framework agnostic
 * Logging via logrus (https://github.com/Sirupsen/logrus/)
 * Configuration file parsing via TOML (https://github.com/toml-lang/toml/)
+* Flags through pflag (https://github.com/ogier/pflag)
 * Command line flags which can overrule configuration file
 * Simple status/health system for exposing structs
 * Run HTTP and HTTPS servers with the same binary.
@@ -50,32 +51,32 @@ LogFile     = "/tmp/out.log"
 ```bash
 $ ./status-example -help
 Usage of ./status-example:
-  -BindAddress="0.0.0.0": Bind address.
-  -BindHttpsPort=443: HTTPS bind port.
-  -BindPort=80: HTTP bind port.
-  -CertFile="": Cert file.
-  -KeyFile="": Key file.
-  -LogFile="": Log file.
-  -LogLevel="info": Log level.
-  -MaxHeaderBytes=1048576: Max header bytes.
-  -ReadTimeout=10s: Read timeout.
-  -WriteTimeout=10s: Write timeout.
+  --BindAddress="0.0.0.0": Bind address.
+  --BindHttpsPort=443: HTTPS bind port.
+  --BindPort=80: HTTP bind port.
+  --CertFile="": Cert file.
+  --KeyFile="": Key file.
+  --LogFile="": Log file.
+  --LogLevel="info": Log level.
+  --MaxHeaderBytes=1048576: Max header bytes.
+  --ReadTimeout=10s: Read timeout.
+  --WriteTimeout=10s: Write timeout.
 ```
 
 #### Configuration File Defaults
 ```bash
 $ ./status-example -help /path/to/conf.toml
 Usage of ./status-example:
-  -BindAddress="127.0.0.1": Bind address.
-  -BindHttpsPort=8181: HTTPS bind port.
-  -BindPort=8000: HTTP bind port.
-  -CertFile="./cert.pem": Cert file.
-  -KeyFile="./key.pem": Key file.
-  -LogFile="/tmp/out.log": Log file.
-  -LogLevel="info": Log level.
-  -MaxHeaderBytes=1048576: Max header bytes.
-  -ReadTimeout=10s: Read timeout.
-  -WriteTimeout=10s: Write timeout.
+  --BindAddress="127.0.0.1": Bind address.
+  --BindHttpsPort=8181: HTTPS bind port.
+  --BindPort=8000: HTTP bind port.
+  --CertFile="./cert.pem": Cert file.
+  --KeyFile="./key.pem": Key file.
+  --LogFile="/tmp/out.log": Log file.
+  --LogLevel="info": Log level.
+  --MaxHeaderBytes=1048576: Max header bytes.
+  --ReadTimeout=10s: Read timeout.
+  --WriteTimeout=10s: Write timeout.
 ```
 
 ## Examples

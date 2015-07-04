@@ -3,6 +3,7 @@ package goserv
 import (
 	"fmt"
 	"github.com/Sirupsen/logrus"
+	flag "github.com/ogier/pflag"
 	"os"
 	"testing"
 	"time"
@@ -20,6 +21,12 @@ var TestConfig = BaseConfiguration{
 	0,
 	"",
 	"",
+}
+
+// Required for testing
+func init() {
+	flag.StringP("test", "t", "", "")
+	flag.Parse()
 }
 
 // tearDown removes the log file created by tests
