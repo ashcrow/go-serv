@@ -72,6 +72,21 @@ func makeLogger(conf *BaseConfiguration) {
 	Logger.Infof("Initialized at level %s", Logger.Level)
 }
 
+// LogAccess logs Access requests that come in to the server
+func LogAccess(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		Logger.WithFields(logrus.Fields{
+			"RemoteAddr":       r.RemoteAddr,
+			"UserAgent":        r.UserAgent(),
+			"RequestURI":       r.RequestURI,
+			"Method":           r.Method,
+			"Proto":            r.Proto,
+			"ConnectionLength": r.ContentLength,
+		}).Info("Access")
+		handler.ServeHTTP(w, r)
+	})
+}
+
 // BackgroundRunHttp runs an http server in a goroutine.
 // Returns a send-only channel to watch for errors.
 func BackgroundRunHttp(server *http.Server, conf *BaseConfiguration) chan error {
